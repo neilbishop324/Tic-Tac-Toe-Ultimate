@@ -10,8 +10,8 @@ import com.neilb.tictactoe.ultimate.common.util.y
 
 class Game {
 
-    private var player1turn = true
-    private var lastCapsule = -1 to -1
+    var player1turn by mutableStateOf(true)
+    var lastCapsule by mutableStateOf(-1 to -1)
 
     var player1score by mutableStateOf(0)
     var player2score by mutableStateOf(0)

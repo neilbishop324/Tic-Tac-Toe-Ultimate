@@ -1,4 +1,4 @@
-package com.neilb.tictactoe.ultimate.common.ui
+package com.neilb.tictactoe.ultimate.common.ui.components
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.*
