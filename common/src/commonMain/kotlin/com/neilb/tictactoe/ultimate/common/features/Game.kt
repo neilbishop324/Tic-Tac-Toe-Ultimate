@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import com.neilb.tictactoe.ultimate.common.ui.screens.gameType
 import com.neilb.tictactoe.ultimate.common.util.x
 import com.neilb.tictactoe.ultimate.common.util.y
 
@@ -22,6 +23,9 @@ class Game {
         const val empty = 0
         const val player1 = 1
         const val player2 = 2
+
+        const val easyBot = 10
+        const val twoPlayer = 20
 
         fun getTextByType(type: Int): Char {
             return when (type) {
@@ -59,7 +63,10 @@ class Game {
         return list
     }
 
-    fun changePositionData(position: Pair<Pair<Int, Int>, Pair<Int, Int>>, uiFeatures: UIFeatures) {
+    fun changePositionData(
+        position: Pair<Pair<Int, Int>, Pair<Int, Int>>,
+        uiFeatures: UIFeatures,
+        isBot: Boolean = false) {
         if (mainBoard[position.first.y()][position.first.x()] == empty && (lastCapsule == -1 to -1 ||
             position.first == lastCapsule)
         ) {
@@ -83,6 +90,7 @@ class Game {
                     uiFeatures.showToastMessage()
 
                     playAgain()
+                    return
                 } else if (roundCount == 9) {
                     uiFeatures.toastMessageText = "Draw"
                 }
@@ -94,6 +102,30 @@ class Game {
             if (mainBoard[lastCapsule.y()][lastCapsule.x()] != empty) {
                 lastCapsule = -1 to -1
             }
+
+            if (gameType == easyBot && !isBot)
+                playBotMove(uiFeatures)
+        }
+    }
+
+    private fun playBotMove(uiFeatures: UIFeatures) {
+        uiFeatures.sleep(1000) {
+            var mainPosition = lastCapsule
+            if (lastCapsule == -1 to -1) {
+                val emptySquares = mainBoard
+                    .mapIndexed { y, ints -> ints.mapIndexed { x, int -> Triple(y, x, int) } }
+                    .map { nums -> nums.filter { it.third == empty } }
+                    .filter { it.isNotEmpty() }
+                val randomElement = emptySquares.random().random()
+                mainPosition = randomElement.first to randomElement.second
+            }
+            val emptySquares = board[mainPosition.first][mainPosition.second]
+                .mapIndexed { y, ints -> ints.mapIndexed { x, int -> Triple(y, x, int) } }
+                .map { nums -> nums.filter { it.third == empty } }
+                .filter { it.isNotEmpty() }
+            val randomElement = emptySquares.random().random()
+            val secondPosition = randomElement.first to randomElement.second
+            changePositionData(mainPosition to secondPosition, uiFeatures, true)
         }
     }
 

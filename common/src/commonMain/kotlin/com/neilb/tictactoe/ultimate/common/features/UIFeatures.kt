@@ -25,4 +25,12 @@ class UIFeatures {
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
+    fun sleep(timeMillis: Long, then: () -> Unit) {
+        GlobalScope.launch {
+            delay(timeMillis)
+            then()
+        }
+    }
+
 }
